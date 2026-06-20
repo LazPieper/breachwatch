@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BREACHWATCH — Global Data Breach Tracker</title>
+  <meta name="description" content="A live-tracking record of major breaches of personally identifiable information (PII) worldwide, shown as a timeline and an interactive world map." />
+
+  <!-- Leaflet (OpenStreetMap) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div class="brand-text">
+        <h1>BREACH<span>WATCH</span></h1>
+        <p class="tagline">Global PII Data Breach Tracker</p>
+      </div>
+    </div>
+
+    <div class="view-toggle" role="tablist" aria-label="View mode">
+      <button class="view-btn active" data-view="timeline" role="tab" aria-selected="true">
+        <span class="ico">▤</span> Timeline
+      </button>
+      <button class="view-btn" data-view="map" role="tab" aria-selected="false">
+        <span class="ico">◍</span> Map
+      </button>
+    </div>
+
+    <div class="live-pill" title="Dataset freshness">
+      <span class="live-dot"></span>
+      <span id="lastUpdated">live</span>
+    </div>
+  </header>
+
+  <section class="stats" id="stats" aria-label="Summary statistics"></section>
+
+  <section class="controls">
+    <div class="search-wrap">
+      <span class="search-ico">⌕</span>
+      <input id="search" type="search" placeholder="Search organization, attacker, country, data type…" autocomplete="off" />
+    </div>
+    <select id="filterSector" class="filter" aria-label="Filter by sector"></select>
+    <select id="filterSeverity" class="filter" aria-label="Filter by severity">
+      <option value="">All severities</option>
+      <option value="catastrophic">Catastrophic</option>
+      <option value="critical">Critical</option>
+      <option value="high">High</option>
+      <option value="moderate">Moderate</option>
+    </select>
+    <select id="sortBy" class="filter" aria-label="Sort by">
+      <option value="date-desc">Newest first</option>
+      <option value="date-asc">Oldest first</option>
+      <option value="records-desc">Most records</option>
+      <option value="records-asc">Fewest records</option>
+    </select>
+    <span class="result-count" id="resultCount"></span>
+  </section>
+
+  <main class="stage">
+    <div id="view-timeline" class="view-panel active"></div>
+    <div id="view-map" class="view-panel">
+      <div id="map"></div>
+      <div class="map-legend" id="mapLegend"></div>
+      <div class="map-ranking" id="mapRanking">
+        <h4>Most breaches by country</h4>
+        <div class="rank-list" id="rankList"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Detail drawer -->
+  <aside class="drawer" id="drawer" aria-hidden="true">
+    <div class="drawer-inner" id="drawerInner"></div>
+  </aside>
+  <div class="drawer-scrim" id="drawerScrim"></div>
+
+  <footer class="sitefoot">
+    <span>BREACHWATCH · curated open dataset</span>
+    <span class="foot-note">Figures reflect widely reported numbers at disclosure and may be revised. Not affiliated with any listed organization.</span>
+  </footer>
+
+  <script src="js/timeline.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
