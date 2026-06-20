@@ -5,8 +5,6 @@ worldwide and lets you explore them as an interactive **timeline** or a **world 
 Click any breach to see what happened, who stole the data, how, what data was exposed,
 and the aftermath.
 
-![views: timeline + map](data/breaches.json)
-
 ## Run it
 
 No build step, no Node required — it's a static site. You just need a local web
@@ -63,28 +61,37 @@ To add a breach by hand, append an object to the `breaches` array and reload.
 ## Keeping it current ("real time")
 
 There is no single feed of *all* global PII breaches, so freshness comes from
-two layers:
+two layers — **the web/news agent is the primary, automated one; HIBP is an
+optional manual backfill.**
 
-1. **Automated list sync** — `scripts/sync_hibp.py` pulls the
-   [Have I Been Pwned](https://haveibeenpwned.com) breach list (free, no key)
-   and appends breaches you don't already have. HIBP has dates, record counts,
-   and exposed data types — but **no location, attacker, or aftermath**, so
-   imported entries land with `country: "Unknown"` and `lat/lon: 0` until you
-   enrich them.
+### 1. Primary: the weekly "watch the news" agent (automated)
+
+A scheduled Claude Code agent runs **weekly** and is the main updater. Each run it
+web-searches reputable sources (BleepingComputer, The Record, Reuters, official
+disclosures, etc.) for newly disclosed major breaches, appends enriched records to
+`data/breaches.json` — **with location, attacker, method, and aftermath** — and
+**opens a pull request** for review rather than pushing to `main`.
+
+This is the source of the rich detail in the dataset. (Set up via Claude's
+scheduling skill; manage it in the app's "Scheduled" section.)
+
+### 2. Optional: Have I Been Pwned backfill (manual)
+
+`scripts/sync_hibp.py` is a manual, opt-in tool — **nothing runs it
+automatically.** It pulls the [Have I Been Pwned](https://haveibeenpwned.com)
+breach list (free, no key) for deterministic, structured backfill of older
+credential breaches. HIBP gives dates, record counts, and exposed data types, but
+**no location, attacker, or aftermath**, so imported entries land with
+`country: "Unknown"` and `lat/lon: 0` until you enrich them. It also skews toward
+email/credential dumps and under-covers healthcare/government/broker breaches.
 
    ```bash
    python3 scripts/sync_hibp.py --dry-run   # preview
    python3 scripts/sync_hibp.py             # merge
    ```
 
-2. **Curated enrichment** — the location / attacker / aftermath detail is
-   researched and filled in by hand (or by a scheduled research agent — see below).
-
-### Optional: a scheduled "watch the news" agent
-
-The richest auto-updates come from a recurring Claude Code agent that web-searches
-for new breaches and appends enriched records to `breaches.json`. Ask Claude to set
-this up with the `/schedule` skill (e.g. a daily run).
+You can also add a breach entirely by hand — just append an object to the
+`breaches` array following the schema above.
 
 ## Notes & disclaimer
 
