@@ -5,8 +5,21 @@ window.BreachMap = (function () {
   let initialized = false;
   let lastItems = [];
 
+  // Size the map to fill exactly the viewport space below the header, measured
+  // from the real header elements (not a hardcoded offset). Works at any width.
+  function fitMapHeight() {
+    const el = document.getElementById("map");
+    if (!el) return;
+    const headerH =
+      (document.querySelector(".topbar")?.offsetHeight || 0) +
+      (document.querySelector(".stats")?.offsetHeight || 0) +
+      (document.querySelector(".controls")?.offsetHeight || 0);
+    el.style.height = Math.max(320, window.innerHeight - headerH) + "px";
+  }
+
   function ensureMap() {
     if (initialized) return;
+    fitMapHeight();
     map = L.map("map", {
       worldCopyJump: true,
       minZoom: 2,
@@ -22,6 +35,12 @@ window.BreachMap = (function () {
     layer = L.layerGroup().addTo(map);
     initialized = true;
     loadLand();
+
+    let rT;
+    window.addEventListener("resize", () => {
+      clearTimeout(rT);
+      rT = setTimeout(() => { fitMapHeight(); map.invalidateSize(); }, 150);
+    });
   }
 
   // flat vector world: cream landmasses + hairline coastlines on a navy ocean
@@ -95,11 +114,11 @@ window.BreachMap = (function () {
       marker.addTo(layer);
     }
 
-    setTimeout(() => map.invalidateSize(), 50);
+    setTimeout(() => { fitMapHeight(); map.invalidateSize(); }, 50);
   }
 
   function refresh() {
-    if (initialized) setTimeout(() => map.invalidateSize(), 50);
+    if (initialized) setTimeout(() => { fitMapHeight(); map.invalidateSize(); }, 50);
   }
 
   function focusCountry(country) {

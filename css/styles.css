@@ -201,7 +201,8 @@ body {
 
 /* ---------- Map ---------- */
 #view-map { position: relative; }
-#map { height: calc(100vh - 224px); min-height: 460px; width: 100%; background: #f0ebdd; overflow: hidden; }
+/* height is set precisely in JS (fitMapHeight); this is just a pre-JS fallback */
+#map { height: 70vh; min-height: 320px; width: 100%; background: #f0ebdd; overflow: hidden; }
 /* warm pale-paper "sea" (no blue); tan land polygons are drawn as vector overlays */
 .leaflet-container { background: #f0ebdd; font-family: var(--mono); overflow: hidden; }
 .leaflet-popup-content-wrapper {
@@ -335,9 +336,6 @@ body {
   .controls { position: static; top: auto; }
   .view-toggle { margin-left: 0; order: 3; width: 100%; }
   .view-btn { flex: 1; justify-content: center; }
-
-  /* viewport-relative map height instead of the desktop header math */
-  #map { height: 70vh; min-height: 360px; }
 
   .d-hero { grid-template-columns: 1fr; }
   .stat .val { font-size: 23px; }
